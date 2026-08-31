@@ -1,7 +1,7 @@
-import csv
-
 from studentclass import Student
-
+from import_roster import read_roster
+from export_csv import write_lst_file
+from constants import WEBWORK_LST_HEADINGS
 
 # with open("data/roster.csv", newline='') as f:
 #     with open('data/roster.lst', 'w') as file:
@@ -24,14 +24,11 @@ from studentclass import Student
             
 #             writer.writerow(entry)
 
-with open("data/roster.csv", newline='') as f:
-    reader = csv.DictReader(f)
+students = read_roster("data/roster.csv")
+write_lst_file("data/roster.lst", students)
 
-    students = []
-    for row in reader:
-        students.append(Student(row["Andrew ID"], row["Preferred/First Name"], row["Last Name"]))
-
-for student in students:
-    print(student.andrew_id, student.first, student.last)
+ 
+for id in students:
+    print(students[id].andrew_id, students[id].first, students[id].last)
 
 print("done")
