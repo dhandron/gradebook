@@ -1,7 +1,10 @@
 from studentclass import Student
 from import_roster import read_roster
 from export_csv import write_lst_file
+from export_csv import write_canvas_grade_import
 from constants import WEBWORK_LST_HEADINGS
+from import_webwork import read_webwork
+from import_canvas import read_canvas
 
 # with open("data/roster.csv", newline='') as f:
 #     with open('data/roster.lst', 'w') as file:
@@ -24,11 +27,30 @@ from constants import WEBWORK_LST_HEADINGS
             
 #             writer.writerow(entry)
 
-students = read_roster("data/roster.csv")
-write_lst_file("data/roster.lst", students)
+###################
 
- 
-for id in students:
-    print(students[id].andrew_id, students[id].first, students[id].last)
+students1 = read_roster("data/241/roster1.csv")
+students2 = read_roster("data/241/roster2.csv")
+students = students1 | students2
+# write_lst_file("data/roster.lst", students)
+
+###################
+
+webwork_grades = read_webwork("data/241/webwork.csv")
+# print(webwork_grades)
+
+
+###################
+
+canvas_record = read_canvas('data/241/canvas.csv')
+
+###################
+
+for student in students:
+    students[student].webwork = webwork_grades[student]
+    students[student].canvas = canvas_record[student]
+
+write_canvas_grade_import('data/241/canvas_upload.csv', students)
+
 
 print("done")

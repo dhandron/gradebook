@@ -18,5 +18,8 @@ class Student:
         self.section = section
         self.email = email
         self.comment = college + " " + department + " " + major
+        self.webwork = None
+        self.canvas = None
+
 
 

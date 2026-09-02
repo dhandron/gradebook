@@ -1,6 +1,8 @@
 import csv
 
-def write_lst_file(file_path:str, data:{str:Student}) -> None:
+from studentclass import Student
+
+def write_lst_file(file_path, data) -> None:
     with open(file_path, 'w') as file:
         writer = csv.writer(file)
 
@@ -23,4 +25,29 @@ def write_lst_file(file_path:str, data:{str:Student}) -> None:
             
             writer.writerow(entry)
 
+
+def write_canvas_grade_import(file_path, students):
+    with open(file_path, 'w') as file:
+        writer = csv.writer(file)
+
+        header = ['Student', 'ID', 'SIS User ID', 'SIS Login ID', 'Section']
+
+        id = list(students)[0]
+        header.extend(list(students[id].webwork))
+        writer.writerow(header)
+
+        for id in students:
+            entry = []
+
+            entry.append(students[id].canvas['Student'])
+            entry.append(students[id].canvas['ID'])
+            entry.append(students[id].canvas['SIS User ID'])
+            entry.append(students[id].canvas['SIS Login ID'])
+            entry.append(students[id].canvas['Section'])
+
+            record = students[id].webwork
+            grades = [record[assignment] for assignment in record]
+            entry.extend(grades)
+
+            writer.writerow(entry)
 
