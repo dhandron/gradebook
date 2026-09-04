@@ -1,6 +1,6 @@
 import csv
 
-from studentclass import Student
+from classes import Student
 
 def write_lst_file(file_path, data) -> None:
     with open(file_path, 'w') as file:
