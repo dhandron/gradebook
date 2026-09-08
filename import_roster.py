@@ -1,6 +1,6 @@
 import csv
 
-from studentclass import Student
+from classes import Student
 
 def read_roster(file_path):
     with open(file_path, newline='') as f:
