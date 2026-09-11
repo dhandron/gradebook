@@ -1,4 +1,4 @@
-from classes import Student
+from classes import Course
 from import_roster import read_roster
 from export_csv import write_lst_file
 from export_csv import write_canvas_grade_import
@@ -42,7 +42,9 @@ write_lst_file("data/241/roster.lst", students)
 
 ###################
 
-# canvas_record = read_canvas('data/241/canvas.csv')
+canvas_record = read_canvas('data/canvas.csv')
+for key in canvas_record:
+    print(key)
 
 ###################
 
@@ -52,5 +54,13 @@ write_lst_file("data/241/roster.lst", students)
 
 # write_canvas_grade_import('data/241/canvas_upload.csv', students)
 
+course = Course("21-241", "Matrices and Linear Transformations", "Fall 2026")
+
+course.roster = []
+for id in students:
+    course.roster.append(students[id])
+
+for student in course.roster:
+    print(student.first + " " + student.last)
 
 print("done")

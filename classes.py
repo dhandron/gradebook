@@ -22,10 +22,19 @@ class Student:
         self.canvas = None
 
 class AssignmentGroup:
-    def __init__(self, weight, average, assignments):
-        self.weight = weight
-        self.average = average
-        self.assignments = assignments
+    def __init__(self, name, weight):
+        self.name:str = name
+        self.weight: float = weight
+        self.average: float
+        self.assignments = dict[str:float]
+
+    def add_assignment(self, assignment_name, grade):
+        self.assignments[assignment_name] = grade
+
+class CourseAssignmentGroup(AssignmentGroup):
+    def __init__(self, name, weight):
+        super().__init__(name, weight)
+        self.stats: dict[str: float]
 
 class Course:
     def __init__(self, number, name, semester):
@@ -33,10 +42,10 @@ class Course:
         self.name = name
         self.semester = semester
         self.roster = None
-        self.final = None
-        self.midterms = None
-        self.quizzes = None
-        self.written_hw = None
-        self.online_hw = None
-
+        self.final: CourseAssignmentGroup
+        self.midterms: CourseAssignmentGroup
+        self.quizzes: CourseAssignmentGroup
+        self.written_hw: CourseAssignmentGroup
+        self.online_hw: CourseAssignmentGroup
+        self.cutoffs: dict[str: float]
 
