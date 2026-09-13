@@ -20,4 +20,7 @@ WEBWORK_LST_HEADINGS = ["Andrew ID",
                         "0", 
                         ""]
             
-#             writer.writerow(entry)]
+HW_WEIGHT = .08
+WW_WEIGHT = .08
+MIDTERM_WEIGHT = .52
+FINAL_WEIGHT = .32

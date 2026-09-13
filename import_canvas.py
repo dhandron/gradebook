@@ -1,7 +1,28 @@
 import csv
 
-def read_canvas(file_path):
+def get_canvas_assignments(file_path):
+    with open(file_path, 'r') as file:
+        reader = csv.reader(file)
 
+        header_row = next(reader)
+        row = header_row
+        while row[0].strip() != "Points Possible":
+            row = next(reader)
+        
+        i = 0
+        # print(row)
+        while row[i].strip() != "(read only)":
+            # print(i, row[i])
+            i += 1
+
+        end = i
+        assignments = []
+        for column in range(end):
+            assignments.append(header_row[column].split(' (', maxsplit=1)[0].strip())
+        return assignments
+
+
+def read_canvas(file_path):
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
 
