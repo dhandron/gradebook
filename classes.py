@@ -18,33 +18,45 @@ class Student:
         self.section = section
         self.email = email
         self.comment = college + " " + department + " " + major
-        self.final: AssignmentGroup
-        self.midterms: AssignmentGroup
-        self.quizzes: AssignmentGroup
-        self.written_hw: AssignmentGroup
-        self.online_hw: AssignmentGroup
+        self.grades: list[AssignmentGroup] = []
+        self.average: float
+
+    def compute_cumulative_average(self):
+        total = 0
+        for group in self.grades:
+            group.compute_average()
+            total += group.average * group.weight
+        self.average = total
+
 
 class AssignmentGroup:
     def __init__(self, name, weight):
         self.name:str = name
         self.weight: float = weight
         self.average: float = -1
-        self.grades: dict[str:float] = {}
+        self.grades: dict[str:tuple[float]] = {}
 
     def add_grade(self, assignment_name, grade):
         self.assignments[assignment_name] = grade
 
     def compute_average(self):
         total = 0
+        max_points = 0
         count = 0
         for assignment in self.grades:
-            print(f"self.grades[assignment] is {self.grades[assignment]}")
-            total = total + self.grades[assignment]
-            count += 1
-        print(total)
-        print(count)
-        self.average = total / count
-
+            # print(f"self.grades[{assignment}] is {self.grades[assignment]}")
+            try:                 
+                total = total + float(self.grades[assignment][0]) 
+                max_points = max_points + float(self.grades[assignment][1])
+                count += 1
+            except Exception as e:
+                print(f"no grade recorded for {assignment}")
+            # print(total)
+        # print(count)
+        if count > 0:
+            self.average = total / max_points
+        else: 
+            self.average = ''
 
 
 class CourseAssignmentGroup(AssignmentGroup):

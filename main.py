@@ -7,10 +7,8 @@ from constants import WEBWORK_LST_HEADINGS
 from import_webwork import read_webwork
 from import_canvas import read_canvas
 from import_canvas import get_canvas_assignments
-from constants import HW_WEIGHT
-from constants import WW_WEIGHT
-from constants import MIDTERM_WEIGHT
-from constants import FINAL_WEIGHT
+from constants import GROUPS
+
 
 
 # with open("data/roster.csv", newline='') as f:
@@ -66,44 +64,58 @@ course = Course("21-241", "Matrices and Linear Transformations", "Fall 2026")
 
 
 assignments = get_canvas_assignments("data/canvas.csv")
-hw = []
-ww = []
-midterms = []
-final = []
-for assignment in assignments:
-    if assignment[:2] == "HW" and assignment != "HW#0":
-        hw.append(assignment)
-    elif assignment[:2] == "WW":
-        ww.append(assignment)    
-    elif assignment[:4] == "Exam":
-        midterms.append(assignment)
-    elif assignment[:5] == "Final":
-        final.append(assignment)
-    # else:
-    #     print(assignment)
-   
-
+# hw = []
+# ww = []
+# midterms = []
+# final = []
+# for assignment in assignments:
+#     if assignment[:2] == "HW" and assignment != "HW#0":
+#         hw.append(assignment)
+#     elif assignment[:2] == "WW":
+#         ww.append(assignment)    
+#     elif assignment[:4] == "Exam":
+#         midterms.append(assignment)
+#     elif assignment[:5] == "Final":
+#         final.append(assignment)
+for group in GROUPS:
+    group_assignments = []
+    prefix_length = len(group["prefix"])
+    for assignment in assignments:
+        if assignment[:prefix_length] == group["prefix"]:
+            group_assignments.append(assignment)
+    for student in students:
+        grade_record = AssignmentGroup(group["name"], group["weight"])
+        for assignment in group_assignments:
+            grade_record.grades[assignment] = (canvas_record[student.andrew_id][assignment], assignments[assignment])
+        student.grades.append(grade_record)
 
 for student in students:
-    student.online_hw = AssignmentGroup("WebWork", WW_WEIGHT)
-    for assignment in ww:
-        student.online_hw.grades[assignment] = float(canvas_record[student.andrew_id][assignment])
-    student.written_hw = AssignmentGroup("WebWork", HW_WEIGHT)
-    for assignment in hw:
-        student.written_hw.grades[assignment] = float(canvas_record[student.andrew_id][assignment])
-    student.midterms = AssignmentGroup("Midterm Exams", MIDTERM_WEIGHT)
-    for assignment in midterms:
-        student.midterms.grades[assignment] = float(canvas_record[student.andrew_id][assignment])
-    student.final = AssignmentGroup("Final Exam", FINAL_WEIGHT)
-    for assignment in final:
-        if isinstance(canvas_record[student.andrew_id][assignment], float):
-            student.final.grades[assignment] = float(canvas_record[student.andrew_id][assignment])
-        else:
-            student.final.grades[assignment] = 0
-student = students[0]
-print(student.online_hw.grades)
-student.online_hw.compute_average()
-print(student.online_hw.average)
+    student.compute_cumulative_average()
+    print(f"{student.andrew_id} : {100*student.average}")
+
+
+# for student in students:
+#     student.online_hw = AssignmentGroup("WebWork", WW_WEIGHT)
+#     for assignment in ww:
+#         student.online_hw.grades[assignment] = float(canvas_record[student.andrew_id][assignment])
+#     student.written_hw = AssignmentGroup("WebWork", HW_WEIGHT)
+#     for assignment in hw:
+#         student.written_hw.grades[assignment] = float(canvas_record[student.andrew_id][assignment])
+#     student.midterms = AssignmentGroup("Midterm Exams", MIDTERM_WEIGHT)
+#     for assignment in midterms:
+#         student.midterms.grades[assignment] = float(canvas_record[student.andrew_id][assignment])
+#     student.final = AssignmentGroup("Final Exam", FINAL_WEIGHT)
+#     for assignment in final:
+#         student.final.grades[assignment] = canvas_record[student.andrew_id][assignment]
+
+
+# student = students[2]
+# print(student.andrew_id)
+# for group in student.grades:
+#     print(group.name)
+#     print(group.grades)
+#     group.compute_average()
+#     print(group.average)
 
 
 # print(student.written_hw.grades)

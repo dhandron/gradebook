@@ -19,8 +19,10 @@ WEBWORK_LST_HEADINGS = ["Andrew ID",
                         "", 
                         "0", 
                         ""]
-            
-HW_WEIGHT = .08
-WW_WEIGHT = .08
-MIDTERM_WEIGHT = .52
-FINAL_WEIGHT = .32
+# GROUPS is a list of dictionaries: {gropu_name: (group_prefix, group_weight)}
+GROUPS = [{"name": "Online Homework", "prefix": "WW", "weight": .08},
+          {"name": "Written Homework", "prefix": "HW", "weight": .08},
+          {"name": "Midterm Exams", "prefix": "Exam", "weight": .52},
+          {"name": "Final", "prefix": "Final", "weight": .32}
+          ]
+

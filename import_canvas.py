@@ -5,20 +5,15 @@ def get_canvas_assignments(file_path):
         reader = csv.reader(file)
 
         header_row = next(reader)
-        row = header_row
-        while row[0].strip() != "Points Possible":
-            row = next(reader)
+        max_points_row = next(reader)
         
-        i = 0
+        column = 6
+        assignments = {}
         # print(row)
-        while row[i].strip() != "(read only)":
-            # print(i, row[i])
-            i += 1
+        while max_points_row[column].strip() != "(read only)":
+            assignments[header_row[column].split(' (', maxsplit=1)[0].strip()] = max_points_row[column]
+            column += 1
 
-        end = i
-        assignments = []
-        for column in range(end):
-            assignments.append(header_row[column].split(' (', maxsplit=1)[0].strip())
         return assignments
 
 
