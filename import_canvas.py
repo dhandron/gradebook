@@ -1,6 +1,12 @@
 import csv
 
+from constants import GROUPS
+from classes import AssignmentGroup
+
 def get_canvas_assignments(file_path):
+    # returns a dictionary
+    # keys are assignment names
+    # values are the maximum possible points for the assignment
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
 
@@ -47,3 +53,27 @@ def read_canvas(file_path):
 
     #print(records)
     return records
+
+
+def copy_canvas_to_students(students, canvas_record):
+    assignments = get_canvas_assignments("data/241/canvas.csv")
+
+    for student in students:
+        student.canvas_name = canvas_record[student.andrew_id]["Student"]
+        student.canvas_id = canvas_record[student.andrew_id]["ID"]
+        student.sisuserid = canvas_record[student.andrew_id]["SIS User ID"]
+        student.sisloginid = canvas_record[student.andrew_id]["SIS Login ID"]
+        student.rootaccount = canvas_record[student.andrew_id]["Root Account"]
+        student.canvas_section = canvas_record[student.andrew_id]["Section"]
+
+    for group in GROUPS:
+        group_assignments = []
+        prefix_length = len(group["prefix"])
+        for assignment in assignments:
+            if assignment[:prefix_length] == group["prefix"]:
+                group_assignments.append(assignment)
+        for student in students:
+            grade_record = AssignmentGroup(group["name"], group["weight"])
+            for assignment in group_assignments:
+                grade_record.grades[assignment] = (canvas_record[student.andrew_id][assignment], assignments[assignment])
+            student.grades.append(grade_record)

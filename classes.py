@@ -1,4 +1,33 @@
 
+class AssignmentGroup:
+    def __init__(self, name, weight):
+        self.name:str = name
+        self.weight: float = weight
+        self.average: float = -1
+        self.grades: dict[str:str] = {} # {assignment: grade}
+
+    def add_grade(self, assignment_name, grade):
+        self.assignments[assignment_name] = grade
+
+    def compute_average(self):
+        total = 0
+        max_points = 0
+        count = 0
+        for assignment in self.grades:
+            # print(f"self.grades[{assignment}] is {self.grades[assignment]}")
+            try:                 
+                total = total + float(self.grades[assignment][0]) 
+                max_points = max_points + float(self.grades[assignment][1])
+                count += 1
+            except Exception as e:
+                pass
+                #print(f"no grade recorded for {assignment}")
+        if count > 0:
+            self.average = total / max_points
+        else: 
+            self.average = ''
+
+
 class Student:
     def __init__(self, 
                  andrew_id:str, 
@@ -18,63 +47,34 @@ class Student:
         self.section = section
         self.email = email
         self.comment = college + " " + department + " " + major
+
+        self.canvas_name: str
+        self.canvas_id: str
+        self.sisuserid:str
+        self.sisloginid:str
+        self.rootaccount: str
+        self.canvas_section = "foo"
+
         self.grades: list[AssignmentGroup] = []
         self.average: float
+        self.webwork: AssignmentGroup
 
     def compute_cumulative_average(self):
-        total = 0
+        total_score = 0
+        total_weight = 0
         for group in self.grades:
             group.compute_average()
-            total += group.average * group.weight
-        self.average = total
+            if isinstance(group.average, float):
+                total_score += group.average * group.weight
+                total_weight += group.weight
+        self.average = total_score / total_weight
 
 
-class AssignmentGroup:
-    def __init__(self, name, weight):
-        self.name:str = name
-        self.weight: float = weight
-        self.average: float = -1
-        self.grades: dict[str:tuple[float]] = {}
 
-    def add_grade(self, assignment_name, grade):
-        self.assignments[assignment_name] = grade
-
-    def compute_average(self):
-        total = 0
-        max_points = 0
-        count = 0
-        for assignment in self.grades:
-            # print(f"self.grades[{assignment}] is {self.grades[assignment]}")
-            try:                 
-                total = total + float(self.grades[assignment][0]) 
-                max_points = max_points + float(self.grades[assignment][1])
-                count += 1
-            except Exception as e:
-                print(f"no grade recorded for {assignment}")
-            # print(total)
-        # print(count)
-        if count > 0:
-            self.average = total / max_points
-        else: 
-            self.average = ''
-
-
-class CourseAssignmentGroup(AssignmentGroup):
+class CutoffData(AssignmentGroup):
     def __init__(self, name, weight):
         super().__init__(name, weight)
-        self.stats: dict[str: float]
-        self.cutoffs: dict[str: float]
+        self.cutoffs: list[AssignmentGroup] = []
 
-class Course:
-    def __init__(self, number, name, semester):
-        self.number = number
-        self.name = name
-        self.semester = semester
-        self.roster = None
-        self.final: CourseAssignmentGroup
-        self.midterms: CourseAssignmentGroup
-        self.quizzes: CourseAssignmentGroup
-        self.written_hw: CourseAssignmentGroup
-        self.online_hw: CourseAssignmentGroup
-        self.cutoffs: dict[str: float]
+
 

@@ -1,6 +1,10 @@
 import csv
+from classes import AssignmentGroup
 
 def read_webwork(file_path):
+    # returns a dictionary
+    # keys are students' andrew IDs
+    # values are dictionaries in which keys are assignment names and values are scores
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
 
@@ -38,4 +42,8 @@ def read_webwork(file_path):
 
         return grades
         
-        
+def copy_webwork_to_students(students, webwork_record):
+    for student in students:
+        student.webwork = AssignmentGroup("webwork", 1)
+        for assignment, score in webwork_record[student.andrew_id].items():
+            student.webwork.grades[assignment] = score;

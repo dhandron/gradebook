@@ -2,22 +2,22 @@ import csv
 
 from classes import Student
 
-def write_lst_file(file_path, data) -> None:
+def write_lst_file(file_path, students) -> None:
     with open(file_path, 'w') as file:
         writer = csv.writer(file)
 
-        for id in data:
+        for student in students:
             entry = []
 
-            entry.append(data[id].andrew_id)
-            entry.append(data[id].last)
-            entry.append(data[id].first)
+            entry.append(student.andrew_id)
+            entry.append(student.last)
+            entry.append(student.first)
             entry.append("C")
-            entry.append(data[id].college + " " + data[id].department + " " + data[id].major)
-            entry.append(data[id].section)
+            entry.append(student.college + " " + student.department + " " + student.major)
+            entry.append(student.section)
             entry.append("")
-            entry.append(data[id].email)
-            entry.append(data[id].andrew_id)
+            entry.append(student.email)
+            entry.append(student.andrew_id)
             entry.append("")
             entry.append("0")
             entry.append("")
@@ -32,20 +32,20 @@ def write_canvas_grade_import(file_path, students):
 
         header = ['Student', 'ID', 'SIS User ID', 'SIS Login ID', 'Section']
 
-        id = list(students)[0]
-        header.extend(list(students[id].webwork))
+       
+        header.extend(list(students[0].webwork.grades))
         writer.writerow(header)
 
-        for id in students:
+        for student in students:
             entry = []
 
-            entry.append(students[id].canvas['Student'])
-            entry.append(students[id].canvas['ID'])
-            entry.append(students[id].canvas['SIS User ID'])
-            entry.append(students[id].canvas['SIS Login ID'])
-            entry.append(students[id].canvas['Section'])
+            entry.append(student.canvas_name)
+            entry.append(student.canvas_id)
+            entry.append(student.sisuserid)
+            entry.append(student.sisloginid)
+            entry.append(student.canvas_section)
 
-            record = students[id].webwork
+            record = student.webwork.grades
             grades = [record[assignment] for assignment in record]
             entry.extend(grades)
 

@@ -1,4 +1,3 @@
-from classes import Course
 from classes import AssignmentGroup
 from classes import Student
 from import_roster import read_roster
@@ -6,10 +5,14 @@ from export_csv import write_lst_file
 from export_csv import write_canvas_grade_import
 from constants import WEBWORK_LST_HEADINGS
 from import_webwork import read_webwork
+from import_webwork import copy_webwork_to_students
 from import_canvas import read_canvas
 from import_canvas import get_canvas_assignments
+from import_canvas import copy_canvas_to_students
 from constants import GROUPS
 from constants import CUTOFFS
+from cutoffs import generate_cutoff_records
+
 
 
 
@@ -36,22 +39,22 @@ from constants import CUTOFFS
 
 ###################
 
-students = read_roster("data/roster.csv")
-# students2 = read_roster("data/241/roster2.csv")
-# students = students1 | students2
+students = read_roster("data/241/roster1.csv")
+students2 = read_roster("data/241/roster2.csv")
+students.extend(students2)
 # write_lst_file("data/241/roster.lst", students)
 
 
 
 ###################
 
-# webwork_grades = read_webwork("data/241/webwork.csv")
-# print(webwork_grades)
+webwork_grades = read_webwork("data/241/webwork.csv")
+copy_webwork_to_students(students, webwork_grades)
 
 
 ###################
 
-canvas_record = read_canvas('data/canvas.csv')
+canvas_record = read_canvas('data/241/canvas.csv')
 
 
 ###################
@@ -62,48 +65,39 @@ canvas_record = read_canvas('data/canvas.csv')
 
 # write_canvas_grade_import('data/241/canvas_upload.csv', students)
 
-course = Course("21-241", "Matrices and Linear Transformations", "Fall 2026")
+###################
 
 
-assignments = get_canvas_assignments("data/canvas.csv")
+assignments = get_canvas_assignments("data/241/canvas.csv")
+copy_canvas_to_students(students, canvas_record)
 
-
-for group in GROUPS:
-    group_assignments = []
-    prefix_length = len(group["prefix"])
-    for assignment in assignments:
-        if assignment[:prefix_length] == group["prefix"]:
-            group_assignments.append(assignment)
-    for student in students:
-        grade_record = AssignmentGroup(group["name"], group["weight"])
-        for assignment in group_assignments:
-            grade_record.grades[assignment] = (canvas_record[student.andrew_id][assignment], assignments[assignment])
-        student.grades.append(grade_record)
 
 for student in students:
     student.compute_cumulative_average()
-    print(f"{student.andrew_id} : {100*student.average}")
-
-for group in GROUPS:
-    group_assignments = []
-    prefix_length = len(group["prefix"])
-    for assignment in assignments:
-        if assignment[:prefix_length] == group["prefix"]:
-            group_assignments.append(assignment)
-    grade_cutoffs = {}
-    for grade in ["A", "B", "C", "D"]:
-        cutoff_record = Student(grade, None, None, '', '', '', '', None)
-        grade_record = AssignmentGroup(group["name"], group["weight"])
-        for assignment in group_assignments:
-            if assignment in CUTOFFS:
-                grade_record.grades[assignment] = (CUTOFFS[assignment], assignments[assignment])
-            else:
-                grade_record.grades[assignment] = (CUTOFFS["default"], assignments[assignment])
-        cutoff_record.grades.append(grade_record)
-    grade_cutoffs[grade] = cutoff_record
+#     print(f"{student.andrew_id} : {100*student.average}")
 
 
-print(len(grade_cutoffs["D"].grades))
+
+cutoffs = generate_cutoff_records()
+
+# for grade in cutoffs:
+#     cutoffs[grade].compute_cumulative_average()
+#     print(f"The {grade} cutoff is {100 * cutoffs[grade].average}")
+#     for group in cutoffs[grade].grades:
+#         print(f"The {grade} cutoff for {group.name} is {group.average}")
+
+
+write_lst_file("data/241/classlist.lst", students)
+write_canvas_grade_import("data/241/canvas_upload2.csv", students)
+
+for student in students:
+    if student.andrew_id == "bchiu2":
+        print(f"{student.first} {student.last} average is {100 * student.average}")
+        for group in student.grades:
+            print(f"{group.name} average is {100 * group.average}")
+            for assignment in group.grades:
+                print(f"[{assignment}: {group.grades[assignment]}")
+
 
 
 print("done")
