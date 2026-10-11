@@ -51,3 +51,24 @@ def write_canvas_grade_import(file_path, students):
 
             writer.writerow(entry)
 
+def write_s3_grade_upload(file_path, students):
+    with open(file_path, 'w') as file:
+        writer = csv.writer(file)
+
+        header = ['Last Name', 'Preferred/First Name', 'Andrew ID', 'Course', 'Mid-Semester Grade', 'Final Grade', 'Default Grade']
+        writer.writerow(header)
+
+        for student in students:
+            entry = []
+
+            entry.append(student.last)
+            entry.append(student.first)
+            entry.append(student.andrew_id)
+            entry.append(student.course)
+            entry.append(student.letter_grade)
+            entry.append('')
+            entry.append('')
+
+
+            writer.writerow(entry)
+

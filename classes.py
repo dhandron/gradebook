@@ -1,3 +1,4 @@
+from constants import COURSE
 
 class AssignmentGroup:
     def __init__(self, name, weight):
@@ -47,6 +48,7 @@ class Student:
         self.section = section
         self.email = email
         self.comment = college + " " + department + " " + major
+        self.course = COURSE
 
         self.canvas_name: str
         self.canvas_id: str
@@ -57,6 +59,7 @@ class Student:
 
         self.grades: list[AssignmentGroup] = []
         self.average: float
+        self.letter_grade: str
         self.webwork: AssignmentGroup
 
     def compute_cumulative_average(self):

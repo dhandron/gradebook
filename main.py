@@ -3,6 +3,7 @@ from classes import Student
 from import_roster import read_roster
 from export_csv import write_lst_file
 from export_csv import write_canvas_grade_import
+from export_csv import write_s3_grade_upload
 from constants import WEBWORK_LST_HEADINGS
 from import_webwork import read_webwork
 from import_webwork import copy_webwork_to_students
@@ -12,6 +13,9 @@ from import_canvas import copy_canvas_to_students
 from constants import GROUPS
 from constants import CUTOFFS
 from cutoffs import generate_cutoff_records
+from cutoffs import is_graded
+from assign_grades import assign_grades
+from assign_grades import assign_midsemester_grades
 
 
 
@@ -72,32 +76,46 @@ assignments = get_canvas_assignments("data/241/canvas.csv")
 copy_canvas_to_students(students, canvas_record)
 
 
+
 for student in students:
     student.compute_cumulative_average()
 #     print(f"{student.andrew_id} : {100*student.average}")
 
 
 
-cutoffs = generate_cutoff_records()
+cutoffs = generate_cutoff_records(assignments, students)
 
-# for grade in cutoffs:
-#     cutoffs[grade].compute_cumulative_average()
-#     print(f"The {grade} cutoff is {100 * cutoffs[grade].average}")
-#     for group in cutoffs[grade].grades:
-#         print(f"The {grade} cutoff for {group.name} is {group.average}")
+for grade in cutoffs:
+    cutoffs[grade].compute_cumulative_average()
+    print(f"The {grade} cutoff is {100 * cutoffs[grade].average}")
+    for group in cutoffs[grade].grades:
+        print(f"The {grade} cutoff for {group.name} is {group.average}")
 
 
 write_lst_file("data/241/classlist.lst", students)
 write_canvas_grade_import("data/241/canvas_upload2.csv", students)
 
+
+# group_name = "Quizzes"
+# assignment = "Quiz #3"
+
+# print(is_graded(assignment, students))
+
+assign_midsemester_grades(students, cutoffs)
+
+# for student in students:
+#     print(f"{student.first} {student.last}'s grade is {student.letter_grade}")
+
+write_s3_grade_upload("data/241/s3_upload.csv", students)
+
 for student in students:
-    if student.andrew_id == "bchiu2":
-        print(f"{student.first} {student.last} average is {100 * student.average}")
+    if student.andrew_id == "sbornema":
+        print(f"{student.first} {student.last}'s average is {100 * student.average}")
+        print(f"{student.first} {student.last}'s grade is {student.letter_grade}")
         for group in student.grades:
             print(f"{group.name} average is {100 * group.average}")
             for assignment in group.grades:
                 print(f"[{assignment}: {group.grades[assignment]}")
-
 
 
 print("done")

@@ -1,3 +1,5 @@
+COURSE = "21241"
+
 ROSTER_IMPORT_HEADINGS = ["Andrew ID", 
                    "Last Name", 
                    "Preferred/First Name", 
